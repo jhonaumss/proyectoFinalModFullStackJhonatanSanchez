@@ -14,10 +14,10 @@
     "dialect": "postgresql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "username": "gestor_tareas_eqvx_user",
+    "password": "1NKbrZ6zBuQwAXb51fBgMPJBiGwC7Exn",
+    "database": "gestor_tareas_eqvx",
+    "host": "dpg-cve7cq3tq21c73ec4a5g-a",
     "dialect": "postgresql"
   }
 }
