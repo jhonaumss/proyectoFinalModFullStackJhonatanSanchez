@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Task } = require("../models");
 
 exports.createTask = async (req, res) => {
@@ -24,11 +25,22 @@ exports.createTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
     try {
-        const tasks = await Task.findAll({ where: { userId: req.user.userId } });
+        const { status, search, fromDate, toDate } = req.query;
+        const filters = { userId: req.user.userId };
+        if (status) {
+          filters.status = status;
+        }
+        if (search) {
+          filters.title = { [Op.iLike]: `%${search}%` };
+        }
+        if (fromDate && toDate) {
+          filters.dueDate = { [Op.between]: [fromDate, toDate] };
+        }
+        const tasks = await Task.findAll({ where: filters });
         res.json(tasks);
-    } catch (error) {
+      } catch (error) {
         res.status(500).json({ message: "Error en el servidor", error });
-    }
+      }
 };
 exports.getTaskById = async (req, res) => {
     try {
@@ -47,29 +59,6 @@ exports.getTaskById = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
       }
 };
-exports.getTasksWithFilter = async (req, res) => {
-    try {
-      const { status, search, fromDate, toDate } = req.query;
-      const filters = { userId: req.user.userId };
-  
-      if (status) {
-        filters.status = status;
-      }
-  
-      if (search) {
-        filters.title = { [Op.iLike]: `%${search}%` };
-      }
-  
-      if (fromDate && toDate) {
-        filters.dueDate = { [Op.between]: [fromDate, toDate] };
-      }
-  
-      const tasks = await Task.findAll({ where: filters });
-      res.json(tasks);
-    } catch (error) {
-      res.status(500).json({ message: "Error en el servidor", error });
-    }
-  };
 
 exports.updateTask = async (req, res) => {
     try {

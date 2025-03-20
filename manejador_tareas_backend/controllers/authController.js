@@ -44,7 +44,20 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5h" });
 
-        res.json({ token });
+        res.json({ message:"Login exitoso" ,token });
+    } catch (error) {
+        res.status(500).json({ message: "Error en el servidor", error });
+    }
+};
+
+exports.me = async (req, res) => {
+    try {
+        const user = await User.findOne({ where: { id: req.user.userId } });
+        if (!user) {
+            return res.status(400).json({ message: "Usuario no encontrado" });
+        }
+
+        res.json({ user });
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor", error });
     }
